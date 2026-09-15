@@ -2,7 +2,49 @@
 
 Parabench is a C++ and OpenMP tool that measures and visualizes multi-threaded CPU performance using parallel matrix math.
 
-It multiplies dense matrices with a naive triple-loop kernel, parallelizes the outer loop with OpenMP, and sweeps matrix size and thread count to see how much larger workloads actually benefit from more threads. Results are written to CSV and plotted with Matplotlib.
+It multiplies dense matrices with a naive triple-loop kernel, parallelizes the outer loop with OpenMP, and sweeps matrix size and thread count to see how larger workloads benefit from additional threads. Results are written to CSV and plotted with Matplotlib.
+
+## Tech stack
+
+### Core stack
+- C++17 (matrix computation and benchmark logic)
+- OpenMP (multi-threaded parallelism)
+- CMake (build system)
+- High-resolution timing + GFLOPS (performance benchmarking)
+- CSV (benchmark results)
+- Python + Matplotlib (performance visualization)
+
+### Benchmark design
+- **Workload:** dense matrix multiplication
+- **Correctness:** serial vs. parallel result validation
+- **CLI:** configurable matrix sizes, thread counts, repeats, and output path
+- **Analysis:** execution time, thread scaling, and parallelism crossover points
+
+### System architecture
+
+```mermaid
+flowchart LR
+    CLI["Benchmark CLI<br/>matrix sizes · threads · repeats"]
+
+    CORE["Matrix Kernel<br/>C++17"]
+    SERIAL["Serial Multiply"]
+    PARALLEL["OpenMP Multiply"]
+
+    TIMER["Benchmark Runner<br/>Timing · GFLOPS"]
+    CSV["CSV Results"]
+    PLOT["Matplotlib<br/>Performance Plot"]
+
+    CLI --> CORE
+
+    CORE --> SERIAL
+    CORE --> PARALLEL
+
+    SERIAL -->|correctness baseline| TIMER
+    PARALLEL -->|timed workload| TIMER
+
+    TIMER --> CSV
+    CSV --> PLOT
+```
 
 ## Build
 
@@ -13,7 +55,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-This produces a `parabench` (or `parabench.exe` on Windows) binary in `build/`.
+This produces a `parabench` binary in `build/` (`parabench.exe` on Windows).
 
 ## Run a benchmark
 
@@ -21,16 +63,18 @@ This produces a `parabench` (or `parabench.exe` on Windows) binary in `build/`.
 ./build/parabench --sizes 256,512,768,1024 --threads 1,2,4,8 --repeats 3 --output results.csv
 ```
 
-- `--sizes` — comma-separated N for N x N matrices
+### Options
+
+- `--sizes` — comma-separated `N` values for `N x N` matrices
 - `--threads` — comma-separated OpenMP thread counts to compare
-- `--repeats` — timed runs per configuration; the fastest is kept
-- `--output` — path to the CSV written (`matrix_size,threads,seconds,gflops`)
+- `--repeats` — timed runs per configuration; the fastest run is kept
+- `--output` — path to the output CSV (`matrix_size,threads,seconds,gflops`)
 
-Before timing anything, the binary cross-checks a small parallel multiply against the serial baseline and warns if they disagree.
+Before timing the benchmark, Parabench cross-checks a small parallel matrix multiplication against the serial implementation and warns if the results disagree.
 
-Example output on a 4-core machine:
+### Example output
 
-```
+```text
 matrix_size,threads,seconds,gflops
 256,1,0.006,5.59
 256,2,0.003,11.18
@@ -42,20 +86,34 @@ matrix_size,threads,seconds,gflops
 
 ## Plot the results
 
+Install the visualization dependencies:
+
 ```bash
 pip install -r scripts/requirements.txt
+```
+
+Generate a performance plot:
+
+```bash
 python scripts/plot_results.py results.csv -o results.png
 ```
 
-This draws one line per thread count, execution time vs. matrix size, so you can see the crossover point where parallelism starts paying off.
+The resulting chart plots execution time against matrix size with a separate line for each thread count, making it easier to see where the overhead of parallelism is outweighed by the performance gained from additional threads.
 
 ## Project layout
 
+```text
+Parabench/
+├── CMakeLists.txt
+├── src/
+│   ├── matrix.hpp
+│   ├── matrix.cpp
+│   └── main.cpp
+└── scripts/
+    ├── plot_results.py
+    └── requirements.txt
 ```
-CMakeLists.txt
-src/
-  matrix.hpp / matrix.cpp   # matrix type, serial and OpenMP multiply
-  main.cpp                  # benchmark CLI
-scripts/
-  plot_results.py           # CSV -> Matplotlib chart
-```
+
+- `matrix.hpp` / `matrix.cpp` — matrix representation and serial/OpenMP multiplication
+- `main.cpp` — benchmark CLI, timing, validation, and CSV output
+- `plot_results.py` — converts benchmark CSV results into a Matplotlib performance chart
