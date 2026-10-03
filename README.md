@@ -1,6 +1,6 @@
-# Parabench
+# Celia
 
-Parabench is a C++ and OpenMP tool that measures and visualizes multi-threaded CPU performance using parallel matrix math.
+Celia is a C++ and OpenMP tool that measures and visualizes multi-threaded CPU performance using parallel matrix math.
 
 It multiplies dense matrices with a naive triple-loop kernel, parallelizes the outer loop with OpenMP, and sweeps matrix size and thread count to see how larger workloads benefit from additional threads. Results are written to CSV and plotted with Matplotlib.
 
@@ -55,12 +55,12 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-This produces a `parabench` binary in `build/` (`parabench.exe` on Windows).
+This produces a `celia` binary in `build/` (`celia.exe` on Windows).
 
 ## Run a benchmark
 
 ```bash
-./build/parabench --sizes 256,512,768,1024 --threads 1,2,4,8 --repeats 3 --output results.csv
+./build/celia --sizes 256,512,768,1024 --threads 1,2,4,8 --repeats 3 --output results.csv
 ```
 
 ### Options
@@ -70,7 +70,7 @@ This produces a `parabench` binary in `build/` (`parabench.exe` on Windows).
 - `--repeats` — timed runs per configuration; the fastest run is kept
 - `--output` — path to the output CSV (`matrix_size,threads,seconds,gflops`)
 
-Before timing the benchmark, Parabench cross-checks a small parallel matrix multiplication against the serial implementation and warns if the results disagree.
+Before timing the benchmark, Celia cross-checks a small parallel matrix multiplication against the serial implementation and warns if the results disagree.
 
 ### Example output
 
@@ -103,7 +103,7 @@ The resulting chart plots execution time against matrix size with a separate lin
 ## Project layout
 
 ```text
-Parabench/
+Celia/
 ├── CMakeLists.txt
 ├── src/
 │   ├── matrix.hpp

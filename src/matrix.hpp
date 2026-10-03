@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace parabench {
+namespace celia {
 
 // Simple row-major square-friendly dense matrix backed by a flat buffer.
 class Matrix {
@@ -30,4 +30,4 @@ Matrix multiply_serial(const Matrix& a, const Matrix& b);
 // OpenMP multiply that parallelizes over the output rows using num_threads threads.
 Matrix multiply_parallel(const Matrix& a, const Matrix& b, int num_threads);
 
-}  // namespace parabench
+}  // namespace celia

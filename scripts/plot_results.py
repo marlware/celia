@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plot Parabench benchmark results as execution-time-vs-matrix-size line charts."""
+"""Plot Celia benchmark results as execution-time-vs-matrix-size line charts."""
 
 import argparse
 import csv
@@ -33,7 +33,7 @@ def plot_results(by_threads, output_path):
 
     ax.set_xlabel("Matrix size (N x N)")
     ax.set_ylabel("Execution time (s)")
-    ax.set_title("Parabench: matrix multiply time vs. size and thread count")
+    ax.set_title("Celia: matrix multiply time vs. size and thread count")
     ax.legend(title="Threads")
     ax.grid(True, alpha=0.3)
 
@@ -44,7 +44,7 @@ def plot_results(by_threads, output_path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("csv_path", help="Path to a results CSV produced by the parabench binary")
+    parser.add_argument("csv_path", help="Path to a results CSV produced by the celia binary")
     parser.add_argument("-o", "--output", default="results.png", help="Output image path")
     args = parser.parse_args()
 

@@ -5,7 +5,7 @@
 #include <random>
 #include <stdexcept>
 
-namespace parabench {
+namespace celia {
 
 Matrix::Matrix(std::size_t rows, std::size_t cols)
     : rows_(rows), cols_(cols), data_(rows * cols, 0.0) {}
@@ -67,4 +67,4 @@ Matrix multiply_parallel(const Matrix& a, const Matrix& b, int num_threads) {
     return result;
 }
 
-}  // namespace parabench
+}  // namespace celia

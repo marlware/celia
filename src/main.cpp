@@ -37,11 +37,11 @@ std::string get_arg(const std::vector<std::string>& args, const std::string& fla
 // Sanity check that the parallel path agrees with the serial baseline
 // before trusting any of the timing numbers below.
 void verify_correctness() {
-    parabench::Matrix a = parabench::Matrix::random(32, 32, 10);
-    parabench::Matrix b = parabench::Matrix::random(32, 32, 20);
+    celia::Matrix a = celia::Matrix::random(32, 32, 10);
+    celia::Matrix b = celia::Matrix::random(32, 32, 20);
 
-    parabench::Matrix expected = parabench::multiply_serial(a, b);
-    parabench::Matrix actual = parabench::multiply_parallel(a, b, 4);
+    celia::Matrix expected = celia::multiply_serial(a, b);
+    celia::Matrix actual = celia::multiply_parallel(a, b, 4);
 
     double max_diff = 0.0;
     for (std::size_t i = 0; i < expected.rows(); ++i) {
@@ -71,15 +71,15 @@ int main(int argc, char** argv) {
     out << "matrix_size,threads,seconds,gflops\n";
 
     for (int n : sizes) {
-        parabench::Matrix a = parabench::Matrix::random(static_cast<std::size_t>(n), static_cast<std::size_t>(n), 1);
-        parabench::Matrix b = parabench::Matrix::random(static_cast<std::size_t>(n), static_cast<std::size_t>(n), 2);
+        celia::Matrix a = celia::Matrix::random(static_cast<std::size_t>(n), static_cast<std::size_t>(n), 1);
+        celia::Matrix b = celia::Matrix::random(static_cast<std::size_t>(n), static_cast<std::size_t>(n), 2);
 
         for (int threads : thread_counts) {
             double best_seconds = -1.0;
 
             for (int rep = 0; rep < repeats; ++rep) {
                 double start = omp_get_wtime();
-                parabench::Matrix c = parabench::multiply_parallel(a, b, threads);
+                celia::Matrix c = celia::multiply_parallel(a, b, threads);
                 double elapsed = omp_get_wtime() - start;
                 (void)c;
 
