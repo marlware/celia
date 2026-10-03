@@ -117,3 +117,5 @@ Celia/
 - `matrix.hpp` / `matrix.cpp` — matrix representation and serial/OpenMP multiplication
 - `main.cpp` — benchmark CLI, timing, validation, and CSV output
 - `plot_results.py` — converts benchmark CSV results into a Matplotlib performance chart
+
+testing removal of "select an account" on vscode
