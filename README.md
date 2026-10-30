@@ -55,6 +55,16 @@ flowchart LR
 - CMake for building
 - Python and Matplotlib for the charts
 
+## Why these technologies
+
+Each tool was picked for a reason. Here's what each one does for Celia.
+
+- **C++17** runs close to the hardware, so the timings show what the CPU does and not what the language adds
+- **OpenMP** adds multi-threading with a single line above a loop, so the threading code stays tiny
+- **CMake** builds the project the same way on Windows, Mac, and Linux
+- **CSV** is a plain format that opens in almost anything
+- **Python and Matplotlib** make charts quickly, so the C++ doesn't have to draw anything
+
 ## Build
 
 You'll need a C++17 compiler with OpenMP support, and CMake 3.10 or newer.
