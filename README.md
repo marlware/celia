@@ -57,13 +57,20 @@ flowchart LR
 
 ## Why these technologies
 
-Each tool was picked for a reason. Here's what each one does for Celia.
+- **C++17** runs close to the hardware, so timings reflect the CPU
+- **OpenMP** adds threads with one line above a loop
+- **CMake** builds on Windows, Mac, and Linux
+- **CSV** opens in almost anything
+- **Python and Matplotlib** draw the charts quickly
 
-- **C++17** runs close to the hardware, so the timings show what the CPU does and not what the language adds
-- **OpenMP** adds multi-threading with a single line above a loop, so the threading code stays tiny
-- **CMake** builds the project the same way on Windows, Mac, and Linux
-- **CSV** is a plain format that opens in almost anything
-- **Python and Matplotlib** make charts quickly, so the C++ doesn't have to draw anything
+Here's how the pieces connect.
+
+```mermaid
+flowchart LR
+    CLI["Benchmark CLI: C++17"] --> Math["Matrix multiply with OpenMP threads"]
+    Math --> CSV["CSV file"]
+    CSV --> Chart["Python + Matplotlib chart"]
+```
 
 ## Build
 
