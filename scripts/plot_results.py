@@ -24,12 +24,15 @@ def load_results(csv_path):
     return by_threads
 
 
-def plot_results(by_threads, output_path):
+def plot_results(by_threads, output_path, log_y=False):
     fig, ax = plt.subplots(figsize=(8, 5))
 
     for threads in sorted(by_threads):
         sizes, seconds = zip(*by_threads[threads])
         ax.plot(sizes, seconds, marker="o", label=f"{threads} thread{'s' if threads != 1 else ''}")
+
+    if log_y:
+        ax.set_yscale("log")
 
     ax.set_xlabel("Matrix size (N x N)")
     ax.set_ylabel("Execution time (s)")
@@ -46,10 +49,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("csv_path", help="Path to a results CSV produced by the celia binary")
     parser.add_argument("-o", "--output", default="results.png", help="Output image path")
+    parser.add_argument("--log-y", action="store_true", help="Use a log scale for the time axis")
     args = parser.parse_args()
 
     by_threads = load_results(args.csv_path)
-    plot_results(by_threads, args.output)
+    plot_results(by_threads, args.output, args.log_y)
 
 
 if __name__ == "__main__":
