@@ -68,6 +68,11 @@ int main(int argc, char** argv) {
     verify_correctness();
 
     std::ofstream out(output_path);
+    if (!out) {
+        std::cerr << "error: could not open " << output_path << " for writing
+";
+        return 1;
+    }
     out << "matrix_size,threads,seconds,gflops\n";
 
     for (int n : sizes) {
