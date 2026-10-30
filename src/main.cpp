@@ -65,6 +65,12 @@ int main(int argc, char** argv) {
     int repeats = std::stoi(get_arg(args, "--repeats", "3"));
     std::string output_path = get_arg(args, "--output", "results.csv");
 
+    if (repeats < 1) {
+        std::cerr << "error: --repeats must be at least 1
+";
+        return 1;
+    }
+
     verify_correctness();
 
     std::ofstream out(output_path);
