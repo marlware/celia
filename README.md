@@ -1,26 +1,28 @@
 # Celia
 
-Celia is a C++ and OpenMP tool that measures and visualizes multi-threaded CPU performance using parallel matrix math.
+Parallel CPU Benchmark
 
-It multiplies dense matrices with a naive triple-loop kernel, parallelizes the outer loop with OpenMP, and sweeps matrix size and thread count to see how larger workloads benefit from additional threads. Results are written to CSV and plotted with Matplotlib.
+## What's going on here
 
-## Tech stack
+Celia answers a simple question. How much faster does a program get when you give it more CPU cores? To find out, it multiplies big grids of numbers (called matrices) using 1 thread, then 2, then 4, and so on. It times each run and draws a chart of the results.
 
-### Core stack
-- C++17 (matrix computation and benchmark logic)
-- OpenMP (multi-threaded parallelism)
-- CMake (build system)
-- High-resolution timing + GFLOPS (performance benchmarking)
-- CSV (benchmark results)
-- Python + Matplotlib (performance visualization)
+The chart shows something interesting. For small grids, extra threads barely help, and sometimes they even slow things down. For big grids, they help a lot.
 
-### Benchmark design
-- **Workload:** dense matrix multiplication
-- **Correctness:** serial vs. parallel result validation
-- **CLI:** configurable matrix sizes, thread counts, repeats, and output path
-- **Analysis:** execution time, thread scaling, and parallelism crossover points
+- Written in C++ with OpenMP, which splits a loop across CPU cores
+- Saves results to a CSV file
+- Draws the chart with Python and Matplotlib
 
-### System architecture
+## How it works
+
+- Celia multiplies square matrices with a plain triple loop on purpose
+- The outer loop gets split across threads with OpenMP
+- It tries every matrix size with every thread count you ask for
+- Each setup runs several times, and the fastest run is kept
+- Before timing anything, it checks that the parallel answer matches the serial one
+- If they disagree, it prints a warning
+- Speed is reported in seconds and in GFLOPS (billions of math operations per second)
+
+The simple loop keeps the code easy to read. It also means the GFLOPS numbers are for comparing thread counts, not for showing off peak speed.
 
 ```mermaid
 flowchart LR
@@ -46,33 +48,40 @@ flowchart LR
     CSV --> PLOT
 ```
 
+## Tech stack
+
+- C++17 for the matrix math and benchmark logic
+- OpenMP for multi-threading
+- CMake for building
+- Python and Matplotlib for the charts
+
 ## Build
 
-Requires a C++17 compiler with OpenMP support and CMake 3.10+.
+You'll need a C++17 compiler with OpenMP support, and CMake 3.10 or newer.
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-This produces a `celia` binary in `build/` (`celia.exe` on Windows).
+That makes a `celia` program in `build/` (it's `celia.exe` on Windows).
 
 ## Run a benchmark
+
+Here's an example run.
 
 ```bash
 ./build/celia --sizes 256,512,768,1024 --threads 1,2,4,8 --repeats 3 --output results.csv
 ```
 
-### Options
+You can change these options.
 
-- `--sizes` — comma-separated `N` values for `N x N` matrices
-- `--threads` — comma-separated OpenMP thread counts to compare
-- `--repeats` — timed runs per configuration; the fastest run is kept
-- `--output` — path to the output CSV (`matrix_size,threads,seconds,gflops`)
+- `--sizes` sets the matrix sizes, as a comma-separated list (default `64,128,256,512`)
+- `--threads` sets the thread counts to compare (default `1,2,4,8`)
+- `--repeats` sets how many timed runs each setup gets (default `3`)
+- `--output` sets where the CSV goes (default `results.csv`)
 
-Before timing the benchmark, Celia cross-checks a small parallel matrix multiplication against the serial implementation and warns if the results disagree.
-
-### Example output
+The CSV has one row per setup, like this example.
 
 ```text
 matrix_size,threads,seconds,gflops
@@ -86,26 +95,28 @@ matrix_size,threads,seconds,gflops
 
 ## Plot the results
 
-Install the visualization dependencies:
+First, install the plotting tools.
 
 ```bash
 pip install -r scripts/requirements.txt
 ```
 
-Generate a performance plot:
+Then make the chart.
 
 ```bash
 python scripts/plot_results.py results.csv -o results.png
 ```
 
-Add `--log-y` to put execution time on a log scale, which helps when the larger sizes dwarf the small ones.
-
-The resulting chart plots execution time against matrix size with a separate line for each thread count, making it easier to see where the overhead of parallelism is outweighed by the performance gained from additional threads.
+- The chart plots time against matrix size
+- Each thread count gets its own line
+- That makes it easy to spot where extra threads start to pay off
+- Add `--log-y` to put time on a log scale
+- That helps when the big sizes dwarf the small ones
 
 ## Project layout
 
 ```text
-Celia/
+celia/
 ├── CMakeLists.txt
 ├── src/
 │   ├── matrix.hpp
@@ -116,6 +127,6 @@ Celia/
     └── requirements.txt
 ```
 
-- `matrix.hpp` / `matrix.cpp` — matrix representation and serial/OpenMP multiplication
-- `main.cpp` — benchmark CLI, timing, validation, and CSV output
-- `plot_results.py` — converts benchmark CSV results into a Matplotlib performance chart
+- `matrix.hpp` and `matrix.cpp` hold the matrix type and the serial and OpenMP multiplication
+- `main.cpp` is the command line, the timing, the correctness check, and the CSV output
+- `plot_results.py` turns the CSV into a chart
