@@ -16,3 +16,7 @@ add_executable(celia
 )
 
 target_link_libraries(celia PRIVATE OpenMP::OpenMP_CXX)
+
+if(NOT MSVC)
+    target_compile_options(celia PRIVATE -Wall -Wextra)
+endif()
