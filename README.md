@@ -98,6 +98,8 @@ Generate a performance plot:
 python scripts/plot_results.py results.csv -o results.png
 ```
 
+Add `--log-y` to put execution time on a log scale, which helps when the larger sizes dwarf the small ones.
+
 The resulting chart plots execution time against matrix size with a separate line for each thread count, making it easier to see where the overhead of parallelism is outweighed by the performance gained from additional threads.
 
 ## Project layout
