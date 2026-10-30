@@ -71,6 +71,12 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    if (sizes.empty() || thread_counts.empty()) {
+        std::cerr << "error: --sizes and --threads need at least one value
+";
+        return 1;
+    }
+
     verify_correctness();
 
     std::ofstream out(output_path);
