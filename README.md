@@ -63,8 +63,6 @@ flowchart LR
 - **CSV** opens in almost anything
 - **Python and Matplotlib** draw the charts quickly
 
-Here's how the pieces connect.
-
 ```mermaid
 flowchart LR
     CLI["Benchmark CLI: C++17"] --> Math["Matrix multiply with OpenMP threads"]
